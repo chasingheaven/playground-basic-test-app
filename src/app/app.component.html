@@ -1,1 +1,54 @@
-<p>check the console!</p>
+<div class="form-container">
+    <form novalidate [formGroup]="patientForm" autocomplete="off" spellcheck="false" class="search-patient-form">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Enter a Name</mat-label>
+            <input matInput placeholder="Name" [type]="'text'" formControlName="name" name="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Choose a Birth Date</mat-label>
+            <input matInput formControlName="dob" name="dob" [matDatepicker]="picker">
+            <mat-datepicker-toggle matSuffix [for]="picker">
+                <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="search()" id="try-to-add-phone-button"
+            [disabled]="!patientForm.valid">
+            Search
+        </button>
+    </form>
+</div>
+<div *ngIf="patientForm.get('name').invalid && patientForm.get('name').errors && 
+        (patientForm.get('name').dirty || patientForm.get('name').touched)" class="alert alert-danger">
+    <small class="text-danger" *ngIf="patientForm.get('name').hasError('pattern')">
+        The name field cannot contain non-alphabetic characters
+    </small>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.resource.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.resource.name[0].given}} {{element.resource.name[0].family}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dob">
+        <th mat-header-cell *matHeaderCellDef> D.O.B </th>
+        <td mat-cell *matCellDef="let element"> {{element.resource.birthDate}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div class="response-time">
+    <span>Response time: </span><strong>{{counter | date:'ss.SSS'}} s</strong>
+</div>
